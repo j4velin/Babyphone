@@ -5,15 +5,25 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaRecorder
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.widget.*
+import de.j4velin.ledclient.lib.Flash
+import de.j4velin.ledclient.lib.LedEffect
 
+const val PREFERENCES_NAME = "settings"
 const val THRESHOLD_DEFAULT = 5000
 const val THRESHOLD_SETTING_KEY = "threshold"
+const val SERVER_URI_KEY = "serverUri"
+const val TAG = "Babyphone"
+
+val EFFECT_DEFAULT: LedEffect = Flash(Color.RED, 0.5f, 1)
 
 class MainActivity : Activity() {
+
+    private var statusImage: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +36,7 @@ class MainActivity : Activity() {
             requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 1)
         }
 
-        val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
 
         val threshold = findViewById<EditText>(R.id.threshold)
         threshold.setText(prefs.getInt(THRESHOLD_SETTING_KEY, THRESHOLD_DEFAULT).toString())
@@ -34,12 +44,29 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.save).setOnClickListener {
             prefs.edit().putInt(THRESHOLD_SETTING_KEY, Integer.parseInt(threshold.text.toString()))
                 .apply()
+            Log.d(TAG, "Setting threshold to " + threshold.text.toString())
         }
 
-        findViewById<ImageView>(R.id.status).setOnClickListener {
-            startService(Intent(applicationContext, RecorderService::class.java))
-            // TODO: stop
+        statusImage = findViewById(R.id.status)
+        statusImage?.setOnClickListener {
+            val intent = Intent(applicationContext, RecorderService::class.java)
+            val isRecording = it.tag as Boolean
+            if (isRecording) {
+                stopService(intent)
+                Toast.makeText(this, R.string.recording_stopped, Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                startForegroundService(intent)
+                Toast.makeText(this, R.string.recording_started, Toast.LENGTH_SHORT)
+                    .show()
+            }
+            updateStatus(!isRecording)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateStatus(RecorderService.isRecording)
     }
 
     override fun onRequestPermissionsResult(
@@ -50,30 +77,39 @@ class MainActivity : Activity() {
         if (requestCode == 1 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startRecording()
         } else {
-            Toast.makeText(this, "Permission is required!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.permission_required, Toast.LENGTH_LONG).show()
             finish()
         }
     }
 
+    /**
+     * Starts the recording and updates the UI with the current value
+     */
     private fun startRecording() {
-        val mRecorder = MediaRecorder()
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-        mRecorder.setOutputFile("/dev/null")
-        mRecorder.prepare()
-        mRecorder.start()
-
         val current = findViewById<TextView>(R.id.current)
-
         val handler = Handler()
-        Thread {
-            while (!isDestroyed && !isFinishing) {
-                handler.post {
-                    current.text = "(current: " + mRecorder.maxAmplitude + ")"
-                }
-                Thread.sleep(500)
+        val condition = { !isDestroyed && !isFinishing }
+
+        getAmplitudeWhile(condition, 500) {
+            handler.post {
+                current.text = "(current: $it)"
             }
-        }.start()
+        }
+    }
+
+    /**
+     * Update the status image
+     * @param isRecording true, to set the status to 'recording'
+     */
+    private fun updateStatus(isRecording: Boolean) {
+        Log.d(TAG, "updateStatus, isRecording=$isRecording")
+        statusImage?.setImageResource(
+            if (isRecording) {
+                R.drawable.ic_mic_off_black_24dp
+            } else {
+                R.drawable.ic_mic_black_24dp
+            }
+        )
+        statusImage?.tag = isRecording
     }
 }

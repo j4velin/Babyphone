@@ -16,31 +16,62 @@
         android:src="@drawable/ic_play_circle_outline_black_24dp" />
 
     <TextView
+        android:id="@+id/divider"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/status"
+        android:layout_marginBottom="10dp"
+        android:text="Settings"
+        android:textColor="@color/colorPrimary" />
+
+    <TextView
         android:id="@+id/threshold_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/status"
-        android:text="Set the threshold when an alarm should be triggered:" />
+        android:layout_below="@id/divider"
+        android:text="@string/threshold_setting_text" />
 
     <EditText
         android:id="@+id/threshold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/threshold_text"
+        android:ems="6"
         android:inputType="number" />
-
-    <Button
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/threshold"
-        android:layout_toEndOf="@id/threshold"
-        android:text="save" />
 
     <TextView
         android:id="@+id/current"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/threshold" />
+        android:layout_alignBaseline="@id/threshold"
+        android:layout_toEndOf="@id/threshold" />
+
+    <TextView
+        android:id="@+id/ip_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/threshold"
+        android:layout_marginTop="10dp"
+        android:text="Server IP &amp; port:" />
+
+    <EditText
+        android:id="@+id/ip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/ip_text"
+        android:layout_toEndOf="@id/ip_text"
+        android:ems="10"
+        android:inputType="textUri" />
+
+    <Button
+        android:id="@+id/save"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ip"
+        android:layout_marginTop="10dp"
+        android:text="@string/save" />
+
 
 </RelativeLayout>

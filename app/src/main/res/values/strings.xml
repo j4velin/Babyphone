@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Babyphone</string>
+    <string name="notification_text">Noise level recording active</string>
+    <string name="recording_active">Recording active</string>
+    <string name="notification_channel_description">This notification is shown when the app records the noise level</string>
+    <string name="error_no_server">No server address configured!</string>
+    <string name="recording_stopped">Recording stopped</string>
+    <string name="recording_started">Recording started</string>
+    <string name="permission_required">Permission is required!</string>
+    <string name="save">save</string>
+    <string name="threshold_setting_text">Set the threshold when an alarm should be triggered:</string>
 </resources>
