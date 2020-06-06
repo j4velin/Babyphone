@@ -17,7 +17,7 @@ const val PREFERENCES_NAME = "settings"
 const val THRESHOLD_DEFAULT = 5000
 const val THRESHOLD_SETTING_KEY = "threshold"
 const val SERVER_URI_KEY = "serverUri"
-const val SERVER_URI_DEFAULT = "http://192.168.178.23:5000"
+const val SERVER_URI_DEFAULT = "192.168.178.23:5000"
 const val TAG = "Babyphone"
 
 val EFFECT_DEFAULT: LedEffect = Flash(Color.RED, 0.5f, 1)

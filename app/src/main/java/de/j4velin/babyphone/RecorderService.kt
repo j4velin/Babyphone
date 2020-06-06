@@ -43,7 +43,7 @@ class RecorderService : Service() {
             Toast.makeText(this, R.string.error_no_server, Toast.LENGTH_LONG).show()
             stopSelf()
         } else {
-            ledController = LedController(serverUri)
+            ledController = LedController(if (serverUri.startsWith("http://")) serverUri else "http://$serverUri")
         }
     }
 
