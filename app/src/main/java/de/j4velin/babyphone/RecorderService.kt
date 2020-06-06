@@ -38,7 +38,7 @@ class RecorderService : Service() {
         // update settings
         val settings = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         threshold = settings.getInt(THRESHOLD_SETTING_KEY, THRESHOLD_DEFAULT)
-        val serverUri = settings.getString(SERVER_URI_KEY, "http://192.168.178.23:5000")
+        val serverUri = settings.getString(SERVER_URI_KEY, SERVER_URI_DEFAULT)
         if (serverUri == null) {
             Toast.makeText(this, R.string.error_no_server, Toast.LENGTH_LONG).show()
             stopSelf()

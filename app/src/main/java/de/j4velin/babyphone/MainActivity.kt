@@ -17,6 +17,7 @@ const val PREFERENCES_NAME = "settings"
 const val THRESHOLD_DEFAULT = 5000
 const val THRESHOLD_SETTING_KEY = "threshold"
 const val SERVER_URI_KEY = "serverUri"
+const val SERVER_URI_DEFAULT = "http://192.168.178.23:5000"
 const val TAG = "Babyphone"
 
 val EFFECT_DEFAULT: LedEffect = Flash(Color.RED, 0.5f, 1)
@@ -41,8 +42,13 @@ class MainActivity : Activity() {
         val threshold = findViewById<EditText>(R.id.threshold)
         threshold.setText(prefs.getInt(THRESHOLD_SETTING_KEY, THRESHOLD_DEFAULT).toString())
 
+        val uri = findViewById<EditText>(R.id.uri)
+        uri.setText(prefs.getString(SERVER_URI_KEY, SERVER_URI_DEFAULT))
+
         findViewById<Button>(R.id.save).setOnClickListener {
-            prefs.edit().putInt(THRESHOLD_SETTING_KEY, Integer.parseInt(threshold.text.toString()))
+            prefs.edit()
+                .putInt(THRESHOLD_SETTING_KEY, Integer.parseInt(threshold.text.toString()))
+                .putString(SERVER_URI_KEY, uri.text.toString())
                 .apply()
             Log.d(TAG, "Setting threshold to " + threshold.text.toString())
         }
