@@ -80,6 +80,7 @@
         android:layout_below="@id/uri"
         android:layout_alignBaseline="@id/effect_text"
         android:layout_marginStart="5dp"
+        android:textColor="@color/colorPrimary"
         android:layout_toEndOf="@id/effect_text" />
 
     <Button
