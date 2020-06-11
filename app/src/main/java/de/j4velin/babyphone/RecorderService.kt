@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import de.j4velin.ledclient.lib.LedController
 import de.j4velin.ledclient.lib.LedEffect
+import java.io.IOException
 
 private const val NOTIFICATION_CHANNEL = "notification"
 
@@ -19,7 +20,7 @@ class RecorderService : Service() {
     private var ledController: LedController? = null
     private var recorder: Stoppable? = null
     private var threshold = THRESHOLD_DEFAULT
-    private var ledEffect: LedEffect = EFFECT_DEFAULT // TODO make configurable
+    private var ledEffect: LedEffect = EFFECT_DEFAULT
 
     override fun onBind(intent: Intent?) = null
 
@@ -38,12 +39,19 @@ class RecorderService : Service() {
         // update settings
         val settings = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         threshold = settings.getInt(THRESHOLD_SETTING_KEY, THRESHOLD_DEFAULT)
+        val effectName = settings.getString(EFFECT_NAME_KEY, null)
+        val effectJson = settings.getString(EFFECT_JSON_KEY, null)
+        if (effectName != null && effectJson != null) {
+            ledEffect = LedEffect.fromJsonString(effectName, effectJson)
+        }
+
         val serverUri = settings.getString(SERVER_URI_KEY, SERVER_URI_DEFAULT)
         if (serverUri == null) {
             Toast.makeText(this, R.string.error_no_server, Toast.LENGTH_LONG).show()
             stopSelf()
         } else {
-            ledController = LedController(if (serverUri.startsWith("http://")) serverUri else "http://$serverUri")
+            ledController =
+                LedController(if (serverUri.startsWith("http://")) serverUri else "http://$serverUri")
         }
     }
 
@@ -75,7 +83,13 @@ class RecorderService : Service() {
     private fun amplitudeUpdate(value: Int) {
         if (value > threshold) {
             Log.i(TAG, "Amplitude value $value > $threshold -> sending LED alarm")
-            ledController?.trigger(ledEffect)
+            try {
+                ledController?.trigger(ledEffect)
+            } catch (e: IOException) {
+                Log.e(TAG, "Error sending trigger: ${e.message ?: e.javaClass.simpleName}")
+                // TODO: show error notification?
+                e.printStackTrace()
+            }
         }
     }
 }

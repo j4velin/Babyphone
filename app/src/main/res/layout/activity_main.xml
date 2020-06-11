@@ -64,13 +64,33 @@
         android:ems="10"
         android:inputType="textUri" />
 
+    <TextView
+        android:id="@+id/effect_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ip_text"
+        android:layout_marginTop="20dp"
+        android:text="Effect:" />
+
     <Button
-        android:id="@+id/save"
-        android:layout_centerHorizontal="true"
+        android:id="@+id/effect"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/uri"
+        android:layout_alignBaseline="@id/effect_text"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/effect_text" />
+
+    <Button
+        android:id="@+id/save"
+        style="@android:style/Widget.Material.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/effect"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
+        android:background="@color/colorPrimary"
         android:text="@string/save" />
 
 
