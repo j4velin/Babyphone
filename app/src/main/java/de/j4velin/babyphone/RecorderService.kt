@@ -58,7 +58,7 @@ class RecorderService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (recorder == null) {
             isRecording = true
-            recorder = getAmplitude(1000, this::amplitudeUpdate)
+            recorder = getAmplitude(1000, applicationContext, this::amplitudeUpdate)
             val pendingIntent: PendingIntent =
                 Intent(this, MainActivity::class.java).let { notificationIntent ->
                     PendingIntent.getActivity(this, 0, notificationIntent, 0)

@@ -131,7 +131,7 @@ class MainActivity : Activity() {
         val handler = Handler()
         val condition = { !isDestroyed && !isFinishing }
 
-        getAmplitudeWhile(condition, 500) {
+        getAmplitudeWhile(condition, 500, applicationContext) {
             handler.post {
                 current.text = "(current: $it)"
             }
